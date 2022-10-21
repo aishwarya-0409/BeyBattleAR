@@ -4,7 +4,7 @@ using UnityEngine;
 using Photon.Pun;
 using TMPro;
 
-public class PlayerSetuo : MonoBehaviourPun
+public class PlayerSetup : MonoBehaviourPun
 {
     public TextMeshProUGUI playerNameText;
 

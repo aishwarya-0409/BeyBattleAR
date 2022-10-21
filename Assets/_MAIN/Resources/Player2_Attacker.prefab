@@ -619,6 +619,7 @@ GameObject:
   - component: {fileID: 2343304372207934770}
   - component: {fileID: -2085186452286910527}
   - component: {fileID: 912928052515779597}
+  - component: {fileID: -8135810512546654361}
   m_Layer: 0
   m_Name: Player2_Attacker
   m_TagString: Player
@@ -735,7 +736,8 @@ MonoBehaviour:
   Synchronization: 3
   OwnershipTransfer: 0
   observableSearch: 2
-  ObservedComponents: []
+  ObservedComponents:
+  - {fileID: -8135810512546654361}
   sceneViewId: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
@@ -752,6 +754,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerNameText: {fileID: 1802076417369794717}
+--- !u!114 &-8135810512546654361
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1802076417471478439}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: feb75656ffd811b4db5ba2ee85fcad30, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1802076418753269999
 GameObject:
   m_ObjectHideFlags: 0
