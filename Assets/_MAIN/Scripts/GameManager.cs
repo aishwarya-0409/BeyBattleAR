@@ -35,6 +35,18 @@ public class GameManager : MonoBehaviourPunCallbacks
         searchForGamesButtonGameobject.SetActive(false);
     }
 
+    public void OnQuitMatchButtoClicked()
+    {
+        if (PhotonNetwork.InRoom)
+        {
+            PhotonNetwork.LeaveRoom();
+        }
+        else
+        {
+            SceneLoader.Instance.LoadScene("Scene_Lobby");
+        }
+    }
+
     #endregion
 
     #region PHOTON Callback Methods
@@ -74,6 +86,12 @@ public class GameManager : MonoBehaviourPunCallbacks
 #if UNITY_EDITOR
         Debug.Log(newPlayer.NickName + " joined to " + PhotonNetwork.CurrentRoom.Name + " Player count " + PhotonNetwork.CurrentRoom.PlayerCount);
 #endif
+    }
+
+    public override void OnLeftRoom()
+    {
+        //base.OnLeftRoom();
+        SceneLoader.Instance.LoadScene("Scene_Lobby");
     }
 
     #endregion
