@@ -124,7 +124,7 @@ public class PlayerSelectionManager : MonoBehaviour
         float elapsedTime = 0.0f;
         while (elapsedTime < duration)
         {
-            transform.rotation = Quaternion.Slerp(originalRotation, finalRotation, elapsedTime/duration);
+            transformToRotate.rotation = Quaternion.Slerp(originalRotation, finalRotation, elapsedTime/duration);
             elapsedTime += Time.deltaTime;
             yield return null;
         }
