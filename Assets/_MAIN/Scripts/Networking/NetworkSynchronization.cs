@@ -19,6 +19,8 @@ public class NetworkSynchronization : MonoBehaviour, IPunObservable
     private float distance;
     private float angle;
 
+    private GameObject battleArenaGameobject;
+
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
@@ -26,6 +28,8 @@ public class NetworkSynchronization : MonoBehaviour, IPunObservable
 
         networkedPosition = new Vector3();
         networkedRotation = new Quaternion();
+
+        battleArenaGameobject = GameObject.Find("BattleArena");
     }
 
     // Start is called before the first frame update
@@ -57,7 +61,7 @@ public class NetworkSynchronization : MonoBehaviour, IPunObservable
         {
             // Then, photonView is mine and I am the one who controls this player.
             // should send position, velocity etc. data to the other players
-            stream.SendNext(rb.position);
+            stream.SendNext(rb.position - battleArenaGameobject.transform.position);
             stream.SendNext(rb.rotation);
 
             if (synchronizeVelocity)
@@ -73,7 +77,7 @@ public class NetworkSynchronization : MonoBehaviour, IPunObservable
         else /*if(stream.IsReading) */
         {
             // Called on my player gameobject that exist in remote player's game
-            networkedPosition = (Vector3)stream.ReceiveNext();
+            networkedPosition = (Vector3)stream.ReceiveNext() + battleArenaGameobject.transform.position;
             networkedRotation = (Quaternion)stream.ReceiveNext();
 
             if (isTeleportEnabled)

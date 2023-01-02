@@ -260,6 +260,7 @@ MonoBehaviour:
   - {fileID: 931434789}
   - {fileID: 2043065518}
   - {fileID: 1650174349}
+  battleArenaGameobject: {fileID: 760013867502548235}
 --- !u!1 &114908408
 GameObject:
   m_ObjectHideFlags: 0
@@ -2293,6 +2294,8 @@ MonoBehaviour:
   uI_InformPanelGameobject: {fileID: 212251898}
   uI_InformText: {fileID: 243443568}
   searchForGamesButtonGameobject: {fileID: 623289035}
+  adjust_Button: {fileID: 905712417}
+  raycastCenter_Image: {fileID: 1519210179}
 --- !u!4 &1371483169
 Transform:
   m_ObjectHideFlags: 0
