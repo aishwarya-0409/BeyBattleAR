@@ -34,6 +34,11 @@ public class BattleMechanic : MonoBehaviourPun
     public float doDamage_Coefficient_Defender = 0.75f;     // do less damage - DISADVANTAGE
     public float getDamage_Coefficient_Defender = 0.2f;     // get less damage - ADVANTAGE
 
+    // vfx variable
+    public List<GameObject> pooledObjects;
+    public int amountToPool = 8;
+    public GameObject CollisionEffectPrefab;
+
     private void Awake()
     {
         startSpinSpeed = spinnerScript.spinSpeed;
@@ -48,6 +53,17 @@ public class BattleMechanic : MonoBehaviourPun
         CheckPlayerType();
 
         rb = GetComponent<Rigidbody>();
+
+        if (photonView.IsMine)
+        {
+            pooledObjects = new List<GameObject>();
+            for (int i = 0; i < amountToPool; i++)
+            {
+                GameObject obj = (GameObject)Instantiate(CollisionEffectPrefab, Vector3.zero, Quaternion.identity);
+                obj.SetActive(false);
+                pooledObjects.Add(obj);
+            }
+        }
     }
 
     // Update is called once per frame
@@ -79,6 +95,23 @@ public class BattleMechanic : MonoBehaviourPun
 
     private void OnCollisionEnter(Collision collision)
     {
+        if (photonView.IsMine)
+        {
+            Vector3 effectPosition = (gameObject.transform.position + collision.transform.position) / 2 + new Vector3(0, 0.05f, 0);
+
+            // instantiate collision effect particle system
+            GameObject collisionEffectGameobject = GetPooledObject();
+            if (collisionEffectGameobject != null)
+            {
+                collisionEffectGameobject.transform.position = effectPosition;
+                collisionEffectGameobject.SetActive(true);
+                collisionEffectGameobject.GetComponentInChildren<ParticleSystem>().Play();
+
+                // de-activate collision effect particle system after some seconds.
+                StartCoroutine(DeactivateAfterSeconds(collisionEffectGameobject, 0.5f));
+            }
+        }
+
         if (collision.gameObject.CompareTag("Player"))
         {
             // Comparing the speeds of the SpinnerTops
@@ -166,6 +199,35 @@ public class BattleMechanic : MonoBehaviourPun
         }
     }
 
+    [PunRPC]
+    public void Reborn()
+    {
+        spinnerScript.spinSpeed = startSpinSpeed;
+        currentSpinSpeed = spinnerScript.spinSpeed;
+
+        spinSpeedbar_Image.fillAmount = currentSpinSpeed / startSpinSpeed;
+        spinSpeedRatio_Text.text = currentSpinSpeed + "/" + startSpinSpeed;
+
+        rb.freezeRotation = true;
+        transform.rotation = Quaternion.Euler(Vector3.zero);
+
+        uI_3D_Gameobject.SetActive(true);
+
+        isDead = false;
+    }
+
+    public GameObject GetPooledObject()
+    {
+        for (int i = 0; i < pooledObjects.Count; i++)
+        {
+            if (!pooledObjects[i].activeInHierarchy)
+            {
+                return pooledObjects[i];
+            }
+        }
+        return null;
+    }
+
     IEnumerator Respawn()
     {
         GameObject canvasGameoject = GameObject.Find("Canvas");
@@ -197,20 +259,9 @@ public class BattleMechanic : MonoBehaviourPun
         photonView.RPC("Reborn", RpcTarget.AllBuffered);
     }
 
-    [PunRPC]
-    public void Reborn()
+    IEnumerator DeactivateAfterSeconds(GameObject _gameObject, float _seconds)
     {
-        spinnerScript.spinSpeed = startSpinSpeed;
-        currentSpinSpeed = spinnerScript.spinSpeed;
-
-        spinSpeedbar_Image.fillAmount = currentSpinSpeed / startSpinSpeed;
-        spinSpeedRatio_Text.text = currentSpinSpeed + "/" + startSpinSpeed;
-
-        rb.freezeRotation = true;
-        transform.rotation = Quaternion.Euler(Vector3.zero);
-
-        uI_3D_Gameobject.SetActive(true);
-
-        isDead = false;
+        yield return new WaitForSeconds(_seconds);
+        _gameObject.SetActive(false);
     }
 }
